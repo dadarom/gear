@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.vip.data.vdpe.gear</groupId>
+        <groupId>com.data.vdpe.gear</groupId>
         <artifactId>gear</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.vip.data.vdpe.gear</groupId>
+    <groupId>com.data.vdpe.gear</groupId>
     <artifactId>daemon</artifactId>
 
     <properties>
@@ -18,7 +18,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.vip.data.vdpe.gear</groupId>
+            <groupId>com.data.vdpe.gear</groupId>
             <artifactId>core</artifactId>
         </dependency>
 
