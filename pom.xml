@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vip.data.vdpe.gear</groupId>
+    <artifactId>gear</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>core</module>
+        <module>daemon</module>
+    </modules>
+
+    <properties>
+        <gear.version>${version}</gear.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <guava.version>16.0.1</guava.version>
+        <app.mainclazz>com.vip.data.vdpe.agr</app.mainclazz>
+
+        <!--gearpump core-->
+        <akka.version>2.3.8</akka.version>
+        <akka.data.replication.version>0.11</akka.data.replication.version>
+        <spray.version>1.3.2</spray.version>
+        <commons.http.version>3.1</commons.http.version>
+        <cloudera.version>2.6.0-cdh5.4.2</cloudera.version>
+        <netty.version>3.2.10.Final</netty.version>
+        <slf4j.version>1.7.7</slf4j.version>
+        <common.lang.version>2.6</common.lang.version>
+
+        <!--gearpump deamon-->
+        <intel.codahale.version>3.0.2</intel.codahale.version>
+        <intel.guava.version>16.0.1</intel.guava.version>
+        <intel.kryo.version>0.3.2</intel.kryo.version>
+        <scala.test.version>2.2.0</scala.test.version>
+        <scala.check.version>1.11.3</scala.check.version>
+        <mockito.version>1.10.17</mockito.version>
+        <junit.version>4.12</junit.version>
+        <scala.version>2.11.2</scala.version>
+
+        <!--compile scala-->
+        <!--<scala.version>2.11.8</scala.version>-->
+        <scala.major.version>2.11</scala.major.version>
+        <maven-shade-plugin.version>2.3</maven-shade-plugin.version>
+        <scala-maven-plugin.version>3.2.1</scala-maven-plugin.version>
+    </properties>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                        <encoding>UTF-8</encoding>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <configuration>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.14.1</version>
+                </plugin>
+                <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-resources-plugin</artifactId>-->
+                <!--</plugin>-->
+                <plugin>
+                    <groupId>org.mybatis.generator</groupId>
+                    <artifactId>mybatis-generator-maven-plugin</artifactId>
+                    <version>1.3.1</version>
+                    <configuration>
+                        <verbose>true</verbose>
+                        <overwrite>true</overwrite>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.0</version>
+                    <configuration>
+                        <!-- put your configurations here -->
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!--scala-->
+                <!--<plugin>-->
+                    <!--<groupId>net.alchim31.maven</groupId>-->
+                    <!--<artifactId>scala-maven-plugin</artifactId>-->
+                    <!--<executions>-->
+                        <!--&lt;!&ndash;<execution>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<id>scala-compile-first</id>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<phase>process-resources</phase>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<goals>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<goal>add-source</goal>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<goal>compile</goal>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</goals>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</execution>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<execution>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<id>scala-test-compile</id>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<phase>process-test-resources</phase>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<goals>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<goal>testCompile</goal>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</goals>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</execution>&ndash;&gt;-->
+                    <!--</executions>-->
+                    <!--<configuration>-->
+                        <!--<scalaVersion>${scala.version}</scalaVersion>-->
+                    <!--</configuration>-->
+                <!--</plugin>-->
+
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${scala-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>compile-scala</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>test-compile-scala</id>
+                            <phase>test-compile</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <scalaCompatVersion>${scala.major.version}</scalaCompatVersion>
+                        <checkMultipleScalaVersions>true</checkMultipleScalaVersions>
+                        <scalaVersion>${scala.version}</scalaVersion>
+                        <includes>
+                            <include>lib/*.jar</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://mvn1.tools.vipshop.com/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://mvn1.tools.vipshop.com/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>nexus</id>
+            <name>VipShop Repositories</name>
+            <url>http://mvn1.tools.vipshop.com/nexus/content/repositories/public</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!--gear-->
+            <dependency>
+                <groupId>com.vip.data.vdpe.gear</groupId>
+                <artifactId>core</artifactId>
+                <version>${gear.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vip.data.vdpe</groupId>
+                <artifactId>daemon</artifactId>
+                <version>${gear.version}</version>
+            </dependency>
+
+            <!-- ========================= gearpump =========================-->
+
+            <!-- ======deamon====== -->
+            <!--akka-->
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-contrib_2.11</artifactId>
+                <version>${akka.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.typesafe.akka</groupId>
+                        <artifactId>akka-persistence-experimental_2.11</artifactId>
+                    </exclusion>
+                </exclusions>
+
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-cluster_2.11</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.patriknw</groupId>
+                <artifactId>akka-data-replication</artifactId>
+                <version>${akka.data.replication.version}</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/lib/akka-data-replication_2.11-0.7.jar</systemPath>
+            </dependency>
+
+            <!--spray-->
+            <dependency>
+                <groupId>io.spray</groupId>
+                <artifactId>spray-can_2.11</artifactId>
+                <version>${spray.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.spray</groupId>
+                <artifactId>spray-routing-shapeless2_2.11</artifactId>
+                <version>${spray.version}</version>
+            </dependency>
+
+            <!--commons-->
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons.http.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+
+            <!--hadoop-->
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${cloudera.version}</version>
+            </dependency>
+
+            <!-- ======core====== -->
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${common.lang.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.intel-hadoop</groupId>
+                <artifactId>gearpump-shaded-metrics-graphite</artifactId>
+                <version>${intel.codahale.version}</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/lib/gearpump-shaded-metrics-graphite-3.0.2.jar</systemPath>
+            </dependency>
+            <dependency>
+                <groupId>com.github.intel-hadoop</groupId>
+                <artifactId>gearpump-shaded-guava</artifactId>
+                <version>${intel.guava.version}</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/lib/gearpump-shaded-guava-16.0.1.jar</systemPath>
+            </dependency>
+            <dependency>
+                <groupId>com.github.intel-hadoop</groupId>
+                <artifactId>gearpump-shaded-akka-kryo_2.11</artifactId>
+                <version>${intel.kryo.version}</version>
+                <scope>system</scope>
+                <systemPath>${project.basedir}/lib/gearpump-shaded-akka-kryo_2.11-0.3.2.jar</systemPath>
+            </dependency>
+
+            <!--akka-->
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-actor_2.11</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-remote_2.11</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-agent_2.11</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-slf4j_2.11</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-kernel_2.11</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+
+            <!--test-->
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-testkit_2.11</artifactId>
+                <version>${akka.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_2.11</artifactId>
+                <version>${scala.test.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scalacheck</groupId>
+                <artifactId>scalacheck_2.11</artifactId>
+                <version>${scala.check.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!--scala-->
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-reflect</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+
+            <!--scala version if 2.10-->
+            <!--<dependency>-->
+                <!--<groupId>org.scalamacros</groupId>-->
+                <!--<artifactId>quasiquotes_2.10</artifactId>-->
+                <!--<version>2.1.0-M5</version>-->
+            <!--</dependency>-->
+
+            <!--scala version if 2.11-->
+            <dependency>
+                <groupId>org.scala-lang.modules</groupId>
+                <artifactId>scala-parser-combinators_2.11</artifactId>
+                <version>1.0.3</version>
+            </dependency>
+
+            <!-- ========================= gearpump =========================-->
+
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!--test-->
+    <dependencies>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalacheck</groupId>
+            <artifactId>scalacheck_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+    </profiles>
+</project>
