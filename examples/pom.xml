@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.data.vdpe.gear</groupId>
+        <artifactId>gear</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.data.vdpe.gear</groupId>
+    <artifactId>examples</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>distributedshell</module>
+        <module>distributeservice</module>
+    </modules>
+
+    <properties>
+        <gear.version>${version}</gear.version>
+    </properties>
+
+    <dependencies>
+        <!--gear-->
+        <dependency>
+            <groupId>com.data.vdpe.gear</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.data.vdpe.gear</groupId>
+            <artifactId>daemon</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>

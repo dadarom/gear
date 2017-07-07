@@ -39,11 +39,11 @@ import scala.concurrent.duration._
  *
  * @param appId
  * @param masterProxy
- * @param executorSystemLauncher
+ * @param executorSystemLauncherProps
 */
 private[appmaster]
 class ExecutorSystemScheduler (appId: Int, masterProxy: ActorRef,
-    executorSystemLauncher: (Int, Session) => Props) extends Actor {
+                               executorSystemLauncherProps: (Int, Session) => Props) extends Actor {
 
   private val LOG = LogUtil.getLogger(getClass, app = appId)
   implicit val timeout = Constants.FUTURE_TIMEOUT
@@ -77,13 +77,13 @@ class ExecutorSystemScheduler (appId: Int, masterProxy: ActorRef,
       if (isSessionAlive(session)) {
         val groupedResource = allocations.groupBy(_.worker).mapValues {
           _.reduce((resourceA, resourceB) =>
-            resourceA.copy(resource = (resourceA.resource + resourceB.resource)))
+            resourceA.copy(resource = (resourceA.resource + resourceB.resource))) //slots
         }.toArray
 
         groupedResource.map((workerAndResources) => {
           val ResourceAllocation(resource, worker, workerId) = workerAndResources._2
 
-          val launcher = context.actorOf(executorSystemLauncher(appId, session))
+          val launcher = context.actorOf(executorSystemLauncherProps(appId, session))
           launcher ! LaunchExecutorSystem(WorkerInfo(workerId, worker), currentSystemId, resource)
           currentSystemId = currentSystemId + 1
         })

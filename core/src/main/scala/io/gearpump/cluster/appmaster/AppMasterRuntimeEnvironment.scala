@@ -109,7 +109,8 @@ object AppMasterRuntimeEnvironment {
       appContextInput, app, masters, masterFactory, appMasterFactory, masterConnectionKeeperFactory))
   }
 
-  /**
+  /********************************************  LazyStartAppMaster  *********************************************
+    *
    * This behavior as AppMaster, and will lazy start the real AppMaster. When real AppMaster
    * is not started yet, all messages will be stashed. The stashed messages will be forwarded to
    * real AppMaster when it is started.
@@ -160,8 +161,9 @@ object AppMasterRuntimeEnvironment {
   private[appmaster] case object StartAppMaster
 
 
-  /**
-   * This enhance Master by providing new service: StartExecutorSystems
+  /********************************************  MasterWithExecutorSystemProvider  *********************************************
+   *
+    * This enhance Master by providing new service: StartExecutorSystems
    *
    * * Please use MasterWithExecutorSystemProvider.props to construct this actor
    *
@@ -188,12 +190,12 @@ object AppMasterRuntimeEnvironment {
   object MasterWithExecutorSystemProvider {
     def props(appId: Int, master: ActorRef): Props = {
 
-      val executorSystemLauncher = (appId: Int, session: Session) =>
+      val executorSystemLauncherProps = (appId: Int, session: Session) =>
         Props(new ExecutorSystemLauncher(appId, session))
 
-      val scheduler = Props(new ExecutorSystemScheduler(appId, master,  executorSystemLauncher))
+      val schedulerProps = Props(new ExecutorSystemScheduler(appId, master,  executorSystemLauncherProps))
 
-      Props(new MasterWithExecutorSystemProvider(master, scheduler))
+      Props(new MasterWithExecutorSystemProvider(master, schedulerProps))
     }
   }
 

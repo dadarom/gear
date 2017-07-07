@@ -30,7 +30,6 @@ import scala.concurrent.duration.{FiniteDuration, Duration}
  * This works with Master HA. When there are multiple Master nodes,
  * This will find a active one.
  *
- *
  * @param masters
  */
 class MasterProxy (masters: Iterable[ActorPath], timeout: FiniteDuration)

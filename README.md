@@ -30,3 +30,9 @@ mvn install:install-file -Dfile=akka-data-replication_2.11-0.11.jar -DgroupId=co
 2. __daemon test TestUtil compile error__
 * module core test added to src root
 * OR: copy class(TestUtil/MasterHarness) into daemon test io.gearpump.cluster
+* OR: copy class(TestUtil/MasterHarness) into core src root's io.gearpump.cluster
+
+### quickstart
+1. master cluster into MasterProxy
+2. workers
+3. submit app 

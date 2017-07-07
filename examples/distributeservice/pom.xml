@@ -6,81 +6,19 @@
 
     <parent>
         <groupId>com.data.vdpe.gear</groupId>
-        <artifactId>gear</artifactId>
+        <artifactId>examples</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.data.vdpe.gear</groupId>
-    <artifactId>daemon</artifactId>
+    <artifactId>distributeservice</artifactId>
     <packaging>jar</packaging>
-
-    <properties>
-    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.data.vdpe.gear</groupId>
-            <artifactId>core</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
-
-        <!--akka-->
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-contrib_2.11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-cluster_2.11</artifactId>
-        </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.github.patriknw</groupId>-->
-            <!--<artifactId>akka-data-replication</artifactId>-->
-        <!--</dependency>-->
-
-        <!--spray-->
-        <dependency>
-            <groupId>io.spray</groupId>
-            <artifactId>spray-can_2.11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.spray</groupId>
-            <artifactId>spray-routing-shapeless2_2.11</artifactId>
-        </dependency>
-
-        <!--commons-->
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${commons.http.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!--scala-->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-reflect</artifactId>
-        </dependency>
-
-        <!--scala version if 2.11-->
-        <dependency>
-            <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-parser-combinators_2.11</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>

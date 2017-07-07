@@ -75,6 +75,9 @@ class AppMasterLauncher(
       val selfPath = ActorUtil.getFullPath(context.system, self.path)
 
       val jvmSetting = Util.resolveJvmSetting(appMasterAkkaConfig.withFallback(systemConfig)).appMater
+      /** main class
+        * ActorSystemBooter
+        **/
       val executorJVM = ExecutorJVMConfig(jvmSetting.classPath ,jvmSetting.vmargs,
         classOf[ActorSystemBooter].getName, Array(name, selfPath), jar, username, appMasterAkkaConfig)
 
@@ -83,17 +86,23 @@ class AppMasterLauncher(
   }
 
   def waitForActorSystemToStart(worker : ActorRef, appContext : AppMasterContext, user : UserConfig, resource: Resource) : Receive = {
+
     case ExecutorLaunchRejected(reason, ex) =>
       LOG.error(s"Executor Launch failed reason：$reason", ex)
       LOG.info(s"reallocate resource $resource to start appmaster")
       master ! RequestResource(appId, ResourceRequest(resource))
       context.become(waitForResourceAllocation)
+
     case RegisterActorSystem(systemPath) =>
       LOG.info(s"Received RegisterActorSystem $systemPath for AppMaster")
       sender ! ActorSystemRegistered(worker)
 
       val masterAddress = systemConfig.getStringList(GEARPUMP_CLUSTER_MASTERS)
         .asScala.map(HostPort(_)).map(ActorUtil.getMasterActorPath)
+
+        /**************************************************
+          **** AppMasterRuntimeEnvironment   **************
+          *************************************************/
       sender ! CreateActor(AppMasterRuntimeEnvironment.props(masterAddress, app, appContext), s"appdaemon$appId")
 
       import context.dispatcher

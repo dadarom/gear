@@ -61,6 +61,8 @@ class MasterConnectionKeeper (
   }
 
   context.become(waitMasterToConfirm(registerAppMaster))
+  // val cancellable = registerAppMaster()
+  // context.become(waitMasterToConfirm(cancellable))
 
   def waitMasterToConfirm(cancelRegister: Cancellable): Receive = {
     case AppMasterRegistered(appId) =>

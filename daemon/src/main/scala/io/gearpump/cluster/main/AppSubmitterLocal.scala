@@ -21,23 +21,20 @@ import java.io.File
 import java.net.{URL, URLClassLoader}
 import java.util.jar.JarFile
 
-import io.gearpump.cluster.{UserConfig, Application}
-import io.gearpump.cluster.client.ClientContext
-import io.gearpump.util.{Util, Constants}
 import io.gearpump.util.{AkkaApp, Constants, LogUtil, Util}
 import org.slf4j.Logger
 
 import scala.util.Try
 
-object AppSubmitter extends AkkaApp with ArgumentsParser {
+object AppSubmitterLocal extends AkkaApp with ArgumentsParser {
   val LOG: Logger = LogUtil.getLogger(getClass)
 
   override val ignoreUnknownArgument = true
 
-  override val description = "Submit an application to Master by providing a jar"
+  override val description = "Submit an application by providing a jar in local."
 
   override val options: Array[(String, CLIOption[Any])] = Array(
-    "name" -> CLIOption[String]("<application name>", required = false, defaultValue = Some("")),
+    "namePrefix" -> CLIOption[String]("<application name prefix>", required = false, defaultValue = Some("")),
     "jar" -> CLIOption("<application>.jar", required = true),
     "verbose" -> CLIOption("<print verbose log on console>", required = false, defaultValue = Some(false)))
 
@@ -55,29 +52,33 @@ object AppSubmitter extends AkkaApp with ArgumentsParser {
 
     val jar = config.getString("jar")
 
-//    // Set jar path to be submitted to cluster
-//    System.setProperty(Constants.GEARPUMP_APP_JAR, jar)
+    // Set jar path to be submitted to cluster
+    System.setProperty(Constants.GEARPUMP_APP_JAR, jar)
 
-    val appName = config.getString("name")
-    if (appName.nonEmpty) {
-      if (!Util.validApplicationName(appName)) {
-        throw new Exception(s"$appName is not a valid prefix for an application name")
+    val namePrefix = config.getString("namePrefix")
+    if (namePrefix.nonEmpty) {
+      if (!Util.validApplicationName(namePrefix)) {
+        throw new Exception(s"$namePrefix is not a valid prefix for an application name")
       }
-      System.setProperty(Constants.GEARPUMP_APP_NAME_PREFIX, "")//ignore name_prefix
+      System.setProperty(Constants.GEARPUMP_APP_NAME_PREFIX, namePrefix)
     }
 
     val jarFile = new java.io.File(jar)
+
+    //start main class
     if (!jarFile.exists()) {
       throw new Exception(s"jar $jar does not exist")
     }
 
-    //submit
-    val client = ClientContext(akkaConf)
-    val appid  = client.submit(Application(appName, UserConfig.empty), jar);
-    LOG.info(s"Submit [$appName] with [$jar] in [$appid] to gear cluster.")
+    val classLoader: URLClassLoader = new URLClassLoader(Array(new URL("file:" + jarFile.getAbsolutePath)),
+      Thread.currentThread().getContextClassLoader())
+    val (main, arguments) = parseMain(jarFile, config.remainArgs, classLoader)
 
-    //close
-    client.close();
+    //set the context classloader as ActorSystem will use context classloader in precedence.
+    Thread.currentThread().setContextClassLoader(classLoader)
+    val clazz = classLoader.loadClass(main)
+    val mainMethod = clazz.getMethod("main", classOf[Array[String]])
+    mainMethod.invoke(null, arguments)
   }
 
   private def parseMain(jar: File, remainArgs: Array[String], classLoader: ClassLoader): (String, Array[String]) = {

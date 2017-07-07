@@ -15,39 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gearpump.cluster.main
+package io.gearpump.examples.distributedshell
 
-import io.gearpump.util.LogUtil
+import io.gearpump.cluster.{Application, UserConfig, AppDescription}
+import io.gearpump.cluster.client.ClientContext
+import io.gearpump.cluster.main.{ParseResult, CLIOption, ArgumentsParser}
+import io.gearpump.util.{AkkaApp, LogUtil}
 import org.slf4j.Logger
 
-object Gear  {
-
+object DistributedShell extends AkkaApp with ArgumentsParser {
   private val LOG: Logger = LogUtil.getLogger(getClass)
 
-  val commands = Map("app" -> AppSubmitter, "local" -> AppSubmitterLocal,
-    "kill" -> Kill, "info" -> Info, "replay" -> Replay, "main" -> MainRunner)
+  override val options: Array[(String, CLIOption[Any])] = Array.empty
 
-  def usage: Unit = {
-    val keys = commands.keys.toList.sorted
-    Console.println("Usage: " + "<" + keys.mkString("|") + ">")
-  }
+  override def main(akkaConf: Config, args: Array[String]): Unit = {
+    LOG.info(s"Distributed shell submitting application...")
+    val context = ClientContext(akkaConf)
 
-  def executeCommand(command : String, commandArgs : Array[String]) = {
-    commands.get(command).map(_.main(commandArgs))
-    if (!commands.contains(command)) {
-      val allArgs = (command +: commandArgs.toList).toArray
-      MainRunner.main(allArgs)
-    }
-  }
-
-  def main(args: Array[String]) = {
-    args.length match {
-      case 0 =>
-        usage
-      case a if(a >= 1) =>
-        val command = args(0)
-        val commandArgs = args.drop(1)
-        executeCommand(command, commandArgs)
-    }
+    //submit an application to Master, whose AppMaster is DistShellAppMaster
+    val appId = context.submit(Application[DistShellAppMaster]("DistributedShell", UserConfig.empty))
+    context.close()
+    LOG.info(s"Distributed Shell Application started with appId $appId !")
   }
 }

@@ -96,6 +96,11 @@ object ActorUtil {
         workerId => ResourceRequest(Resource(1), workerId, relaxation = Relaxation.SPECIFICWORKER)
       }.toArray
 
+        /**
+         * TODO 给master发送的消息，却是AppMasterRuntimeEnvironment处理???
+         *      因为在此进程内，AppMasterRuntimeEnvironment是masterProxy的父节点?
+         *      master没有处理，自动向上追溯?
+         */
       master.tell(StartExecutorSystems(resources, executorJvmConfig), sender)
     }
   }

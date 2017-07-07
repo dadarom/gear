@@ -47,7 +47,7 @@ import scala.util.{Failure, Success}
  * AppManager is dedicated part of Master to manager applicaitons
  * AppManager contains Factory-AppMaster
  */
-private[cluster] class AppManager(kvService: ActorRef, launcher: AppMasterLauncherFactory) extends Actor with Stash with TimeOutScheduler{
+private[cluster] class AppManager(kvService: ActorRef, appMatserLauncher: AppMasterLauncherFactory) extends Actor with Stash with TimeOutScheduler{
   private val LOG: Logger = LogUtil.getLogger(getClass)
 
   private val executorId : Int = APPMASTER_DEFAULT_EXECUTOR_ID
@@ -93,7 +93,6 @@ private[cluster] class AppManager(kvService: ActorRef, launcher: AppMasterLaunch
 
   def receiveHandler : Receive = {
     val msg = "Application Manager started. Ready for application submission..."
-    System.out.println(msg)
     LOG.info(msg)
     clientMsgHandler orElse appMasterMessage orElse selfMsgHandler orElse workerMessage orElse appDataStoreService orElse terminationWatch
   }
@@ -105,7 +104,7 @@ private[cluster] class AppManager(kvService: ActorRef, launcher: AppMasterLaunch
       if (applicationNameExist(app.name)) {
         client ! SubmitApplicationResult(Failure(new Exception(s"Application name ${app.name} already existed")))
       } else {
-        context.actorOf(launcher.props(appId, executorId, app, jar, username, context.parent, Some(client)), s"launcher${appId}_${Util.randInt}")
+        context.actorOf(appMatserLauncher.props(appId, executorId, app, jar, username, context.parent, Some(client)), s"launcher${appId}_${Util.randInt}")
 
         val appState = new ApplicationState(appId, app.name, 0, app, jar, username, null)
         appMasterRestartPolicies += appId -> new RestartPolicy(appMasterMaxRetries, appMasterRetryTimeRange)
@@ -290,7 +289,7 @@ private[cluster] class AppManager(kvService: ActorRef, launcher: AppMasterLaunch
       val appId = state.appId
       if(appMasterRestartPolicies.get(appId).get.allowRestart) {
         LOG.info(s"AppManager Recovering Application $appId...")
-        context.actorOf(launcher.props(appId, executorId, state.app, state.jar, state.username, context.parent, None), s"launcher${appId}_${Util.randInt}")
+        context.actorOf(appMatserLauncher.props(appId, executorId, state.app, state.jar, state.username, context.parent, None), s"launcher${appId}_${Util.randInt}")
       } else {
         LOG.error(s"Application $appId failed to many times")
       }
